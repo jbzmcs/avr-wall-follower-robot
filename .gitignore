@@ -1,0 +1,25 @@
+# Compiled object files
+*.o
+*.out
+*.exe
+*.elf
+
+# Assembly/MIPS temporary files
+*.lst
+*.map
+*.srec
+
+# VSCode settings
+.vscode/
+*.code-workspace
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Backup files
+*~
+*.bak
