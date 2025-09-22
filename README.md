@@ -1,4 +1,4 @@
-# COE185 - Embedded Systems Labs
+# COE185 - Embedded Systems Labs - Jabez Ian S. Macasero
 
 This repository contains my lab activities for **COE185 - Embedded Systems**.
 Each lab is organized into its own folder (`lab0`, `lab1`, …, `lab10`) and includes source code, a Makefile, and documentation.
