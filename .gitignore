@@ -3,6 +3,7 @@
 *.out
 *.exe
 *.elf
+*.hex
 
 # Assembly/MIPS temporary files
 *.lst
