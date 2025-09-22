@@ -1,8 +1,12 @@
 DEVICE     = atmega328p
 CLOCK      = 16000000
 PROGRAMMER = -c arduino -b 115200 -P COM3
-OBJECTS    = main.o
+OBJECTS    = main.o gpio.o
 FUSES      = -U hfuse:w:0xde:m -U lfuse:w:0xff:m -U efuse:w:0x05:m
+
+# File names
+TARGET = main
+SRC = $(TARGET).c gpio.c
 
 # Tune the lines below only if you know what you are doing:
 
