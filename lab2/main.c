@@ -1,4 +1,3 @@
-
 // Activity 2.1 Implementing a System Tick
 #define F_CPU 16000000UL
 #include <avr/io.h>
@@ -34,3 +33,51 @@ void system_tick_init(void) {
 
     sei(); // Enable global interrupts. This must be called for any interrupt to work.
 }
+// Activity 2.2: Creating Non-Blocking Tasks
+#define STATUS_LED_PORT GPIO_PORT_D
+#define STATUS_LED_PIN 5
+#define USER_BUTTON_PORT GPIO_PORT_D
+#define USER_BUTTON_PIN 2
+
+void task_blink_status_led(void) {
+    static uint32_t last_toggle_time = 0;
+    if ((system_ticks - last_toggle_time) >= 500) { // 500ms interval
+        // Toggle the LED using your gpio_write/gpio_read functions.
+        uint8_t cur = gpio_read(STATUS_LED_PORT, STATUS_LED_PIN);
+        if(cur == GPIO_PIN_HIGH){
+            gpio_write(STATUS_LED_PORT, STATUS_LED_PIN, GPIO_PIN_LOW);
+        } else {
+            gpio_write(STATUS_LED_PORT, STATUS_LED_PIN, GPIO_PIN_HIGH);
+        }
+        last_toggle_time = system_ticks;
+    }
+}
+
+void task_poll_button(void) {
+    static uint8_t last_button_state = GPIO_PIN_HIGH;
+    uint8_t current_button_state = gpio_read(USER_BUTTON_PORT, USER_BUTTON_PIN);
+
+    if (current_button_state == GPIO_PIN_LOW && last_button_state == GPIO_PIN_HIGH) {
+        // Button was just pressed (falling edge). For now, we do nothing.
+        // In a real app, you might set a flag here.
+    }
+    last_button_state = current_button_state;
+}
+
+int main(void) {
+    /*Initialized GPIO from lab 1*/
+    // --- INITIALIZATION ---
+    gpio_set_direction(STATUS_LED_PORT, STATUS_LED_PIN, GPIO_PIN_OUTPUT);
+    gpio_set_direction(USER_BUTTON_PORT, USER_BUTTON_PIN, GPIO_PIN_INPUT);
+    gpio_set_pullup(USER_BUTTON_PORT, USER_BUTTON_PIN, 1); // enable pull up
+    
+    system_tick_init();
+
+    // --- SUPERLOOP ---
+    while (1) {
+        task_blink_status_led();
+        task_poll_button();
+    }
+    return 0;
+}
+
