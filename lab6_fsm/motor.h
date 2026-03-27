@@ -8,5 +8,5 @@ void motor_backward(void);
 void motor_turn_left(void);
 void motor_turn_right(void);
 void motor_stop(void);
-void motor_set_speed(uint8_t speed);
+void motor_set_speeds(uint8_t speed_left, uint8_t speed_right);
 #endif

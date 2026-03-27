@@ -1,35 +1,41 @@
 DEVICE     = atmega328p
 CLOCK      = 16000000
 PROGRAMMER = -c arduino -b 115200 -P COM3
-OBJECTS    = main.o gpio.o sensor.o motor.o
 FUSES      = -U hfuse:w:0xde:m -U lfuse:w:0xff:m -U efuse:w:0x05:m
+
+OUT_DIR = out
 
 # File names
 SRC = main.c gpio.c sensor.c motor.c
 
-# Tune the lines below only if you know what you are doing:
+# Automatically prefix the output directory to the object files
+OBJECTS = $(addprefix $(OUT_DIR)/, main.o gpio.o sensor.o motor.o)
 
+# Tune the lines below only if you know what you are doing:
 AVRDUDE = avrdude $(PROGRAMMER) -p $(DEVICE)
 COMPILE = avr-gcc -Wall -Os -DF_CPU=$(CLOCK) -mmcu=$(DEVICE)
 
 # symbolic targets:
-all:	main.hex
+all:	$(OUT_DIR)/main.hex
 
-.c.o:
+# Target to create the output directory
+$(OUT_DIR):
+	mkdir -p $(OUT_DIR)
+
+# Pattern rule for compiling C files into the out directory
+$(OUT_DIR)/%.o: %.c | $(OUT_DIR)
 	$(COMPILE) -c $< -o $@
 
-.S.o:
+# Pattern rule for compiling Assembly files into the out directory
+$(OUT_DIR)/%.o: %.S | $(OUT_DIR)
 	$(COMPILE) -x assembler-with-cpp -c $< -o $@
-# "-x assembler-with-cpp" should not be necessary since this is the default
-# file type for the .S (with capital S) extension. However, upper case
-# characters are not always preserved on Windows. To ensure WinAVR
-# compatibility define the file type manually.
 
-.c.s:
+# Pattern rule for generating assembly output from C files
+$(OUT_DIR)/%.s: %.c | $(OUT_DIR)
 	$(COMPILE) -S $< -o $@
 
 flash:	all
-	$(AVRDUDE) -U flash:w:main.hex:i
+	$(AVRDUDE) -U flash:w:$(OUT_DIR)/main.hex:i
 
 fuse:
 	$(AVRDUDE) $(FUSES)
@@ -39,25 +45,23 @@ install: flash fuse
 
 # if you use a bootloader, change the command below appropriately:
 load: all
-	bootloadHID main.hex
+	bootloadHID $(OUT_DIR)/main.hex
 
 clean:
-	rm -f main.hex main.elf $(OBJECTS)
+	rm -rf $(OUT_DIR)
 
 # file targets:
-main.elf: $(OBJECTS)
-	$(COMPILE) -o main.elf $(OBJECTS)
+$(OUT_DIR)/main.elf: $(OBJECTS)
+	$(COMPILE) -o $@ $(OBJECTS)
 
-main.hex: main.elf
-	rm -f main.hex
-	avr-objcopy -j .text -j .data -O ihex main.elf main.hex
-	avr-size --format=avr --mcu=$(DEVICE) main.elf
-# If you have an EEPROM section, you must also create a hex file for the
-# EEPROM and add it to the "flash" target.
+$(OUT_DIR)/main.hex: $(OUT_DIR)/main.elf
+	rm -f $@
+	avr-objcopy -j .text -j .data -O ihex $< $@
+	avr-size --format=avr --mcu=$(DEVICE) $<
 
 # Targets for code debugging and analysis:
-disasm:	main.elf
-	avr-objdump -d main.elf
+disasm:	$(OUT_DIR)/main.elf
+	avr-objdump -d $<
 
 cpp:
 	$(COMPILE) -E main.c
