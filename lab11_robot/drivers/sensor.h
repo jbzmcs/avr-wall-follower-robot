@@ -1,10 +1,11 @@
-// sensor.h
+// drivers/sensor.h - HC-SR04 ultrasonic driver (distances in inches)
 #ifndef SENSOR_H
 #define SENSOR_H
-#include <stdint.h>
+
 void sensor_init(void);
-void sensor_trigger(void);
-uint8_t sensor_is_measurement_complete(void);
-uint16_t sensor_get_pulse_width(void);
-void sensor_reset_measurement(void);
+
+// Single measurement. Returns distance in inches,
+// or 0.0 on timeout / out-of-range reading.
+double sensor_read_inches(void);
+
 #endif
