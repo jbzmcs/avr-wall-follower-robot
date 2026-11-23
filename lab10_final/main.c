@@ -21,7 +21,7 @@ uint16_t EEMEM g_target_distance_eeprom;
 typedef enum { IDLE, FORWARD, TURN_LEFT, TURN_RIGHT } RobotState;
 #define TARGET_DISTANCE_CM    g_target_distance_cm
 #define DISTANCE_THRESHOLD_CM 5
-#define MOTOR_SPEED           70
+#define MOTOR_SPEED           50
 #define erasedMemory          0xFFFF
 
 // Volatile global — shared between ISR and main loop
@@ -31,11 +31,11 @@ volatile RobotState currentState = IDLE;
 // #define TURN_FAST  70
 // #define TURN_SLOW  50
 
-#define TURN_LEFT_FAST   90
+#define TURN_LEFT_FAST   65
 #define TURN_LEFT_SLOW   40
 
-#define TURN_RIGHT_FAST  90
-#define TURN_RIGHT_SLOW  60
+#define TURN_RIGHT_FAST  60
+#define TURN_RIGHT_SLOW  30
 
 void settings_load(void){
     // Read the word from g_target_distance_eeprom.

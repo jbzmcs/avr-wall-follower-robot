@@ -4,6 +4,8 @@
 #include <stdint.h>
 void sensor_init(void);
 void sensor_trigger(void);
+void sensor_reset_measurement(void);
 uint8_t sensor_is_measurement_complete(void);
 uint16_t sensor_get_pulse_width(void);
+
 #endif

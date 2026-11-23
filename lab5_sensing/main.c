@@ -36,11 +36,12 @@ int main(void) {
             
             // Blink the LED if valid reading
             // Only blink if distance < 20cm (wall detected)
-            if (distance_cm > 0 && distance_cm < 400) {
+            if (distance_cm > 0 && distance_cm < 20) {
                 gpio_write(GPIO_PORT_D, 5, GPIO_PIN_HIGH);
                 _delay_ms(50);
                 gpio_write(GPIO_PORT_D, 5, GPIO_PIN_LOW);
             }
+            sensor_reset_measurement();
         }
     }
     return 0;

@@ -14,10 +14,9 @@
 volatile uint16_t pulse_width = 0;
 volatile uint8_t measurement_complete = 0;
 
-/* * ISR(TIMER1_CAPT_vect)
- * Handles the Input Capture event.
- * Implements the state machine to measure pulse duration.
- */
+// ISR(TIMER1_CAPT_vect)
+// Handles the Input Capture event.
+// Implements the state machine to measure pulse duration.
 ISR(TIMER1_CAPT_vect) {
     // Static variable to track which edge we are waiting for
     // 0 = Waiting for Rising Edge (Start of pulse)
@@ -95,4 +94,8 @@ uint8_t sensor_is_measurement_complete(void) {
 
 uint16_t sensor_get_pulse_width(void) {
     return pulse_width;
+}   
+
+void sensor_reset_measurement(void) {
+    measurement_complete = 0;
 }
